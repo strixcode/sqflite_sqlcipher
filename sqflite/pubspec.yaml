@@ -18,6 +18,8 @@ flutter:
         pluginClass: SqfliteSqlCipherPlugin
       macos:
         pluginClass: SqfliteSqlCipherPlugin
+      windows:
+        pluginClass: SqfliteSqlCipherPluginCApi
 
 
 dependencies:
