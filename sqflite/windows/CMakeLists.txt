@@ -45,13 +45,14 @@ target_compile_definitions(${PLUGIN_NAME} PRIVATE FLUTTER_PLUGIN_IMPL)
 # Source include directories and library dependencies. Add any plugin-specific
 # dependencies here.
 target_include_directories(${PLUGIN_NAME} INTERFACE
-  "${CMAKE_CURRENT_SOURCE_DIR}/include"
-  "${CMAKE_CURRENT_SOURCE_DIR}/lib/sqlcipher/include"
-  )
+"${CMAKE_CURRENT_SOURCE_DIR}/include"
+) 
 
-  target_include_directories(${PLUGIN_NAME} SYSTEM INTERFACE
-  "${CMAKE_CURRENT_SOURCE_DIR}/lib/sqlcipher/include"
+  target_include_directories(${PLUGIN_NAME} SYSTEM PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/lib/sqlcipher/include"
   )  
+
 
   target_link_libraries(${PLUGIN_NAME} PRIVATE
     flutter
@@ -59,10 +60,7 @@ target_include_directories(${PLUGIN_NAME} INTERFACE
     C:/Projects/QliqSOFT/flutter/sqflite_sqlcipher/sqflite/windows/lib/sqlcipher/lib/sqlcipher.lib
   )
 
-  #link_directories(${CMAKE_CURRENT_SOURCE_DIR}/lib/sqlcipher/lib)
-  #link_directories(${CMAKE_SOURCE_DIR}/lib/sqlcipher/lib)
-  #link_directories("C:\\Projects\\QliqSOFT\\flutter\\sqflite_sqlcipher\\sqflite\\windows\\lib\\sqlcipher\\lib")
-  link_directories("C:/Projects/QliqSOFT/flutter/sqflite_sqlcipher/sqflite/windows/lib/sqlcipher/lib")
+  link_directories("${CMAKE_CURRENT_SOURCE_DIR}/lib/sqlcipher/lib")
 
 # List of absolute paths to libraries that should be bundled with the plugin.
 # This list could contain prebuilt libraries, or libraries created by an

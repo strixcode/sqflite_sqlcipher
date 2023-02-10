@@ -10,6 +10,8 @@
 #include <thread>
 
 class Database;
+class DatabaseOperation;
+class FlutterError;
 
 namespace sqflite_sqlcipher {
 
@@ -62,17 +64,30 @@ private:
     void DebugCall(const flutter::MethodCall<flutter::EncodableValue> &method_call,
                    std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
+    void DebugModeCall(const flutter::MethodCall<flutter::EncodableValue> &method_call,
+                   std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
+
     void OptionsCall(const flutter::MethodCall<flutter::EncodableValue> &method_call,
                      std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result);
 
     void CloseDatabase(Database *db);
 
-    bool Execute(Database *db,
-                 const flutter::EncodableValue &arguments,
-                 flutter::MethodResult<flutter::EncodableValue> *result);
+    bool Execute(Database *db, DatabaseOperation *operation);
 
-    bool Execute(const flutter::EncodableValue &arguments,
-                 flutter::MethodResult<flutter::EncodableValue> *result);
+    bool ExecuteOrError(Database *db, DatabaseOperation *operation);
+
+    bool Insert(Database *db, DatabaseOperation *operation);
+
+    bool Update(Database *db, DatabaseOperation *operation);
+
+    bool Query(Database *db, DatabaseOperation *operation);
+
+    // bool Execute(Database *db,
+    //              const flutter::EncodableValue &arguments,
+    //              flutter::MethodResult<flutter::EncodableValue> *result);
+
+    // bool Execute(const flutter::EncodableValue &arguments,
+    //              flutter::MethodResult<flutter::EncodableValue> *result);
 
     Database *GetDatabaseOrError(const flutter::EncodableValue &arguments,
                                  flutter::MethodResult<flutter::EncodableValue> *result);
@@ -82,12 +97,17 @@ private:
 
     bool HandleError(int returnCode, flutter::MethodResult<flutter::EncodableValue> *result);
 
+    bool HandleError(int returnCode, FlutterError *error);
+
+    bool HandleError(int returnCode, DatabaseOperation *operation);
+
     int m_databaseOpenCount = 0;
     std::thread *m_handlerThread = nullptr;
     std::map<int, Database *> m_databaseMap;
     std::map<std::string, Database *> m_singleInstanceMap;
     std::mutex m_databaseMapMutex;
     int m_databaseId = 0;
+    bool m_queryReturnsListOfMaps = true;
 };
 
 } // namespace sqflite_sqlcipher

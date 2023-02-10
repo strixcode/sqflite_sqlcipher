@@ -14,14 +14,15 @@ T GetArgument(const flutter::EncodableValue &arguments, std::string name)
 {
     auto map = std::get<flutter::EncodableMap>(arguments);
     if (map.count(name) == 0) {
-        s_logFile << "GetArgument() key '" << name << "' not found";
+        spdlog::error("GetArgument() key '{}' not found", name);
         assert(map.count(name) == 1);
         return {};
     } else {
         auto value = map[name];
         if (!std::holds_alternative<T>(value)) {
-            s_logFile << "GetArgument() the value for '" << name
-                      << "' is of wrong type, index:" << value.index() << std::endl;
+            spdlog::error("GetArgument() the value '{}' is of wrong type, index: {}",
+                          name,
+                          value.index());
         }
         return std::get<T>(value);
     }
@@ -35,14 +36,15 @@ T GetOptionalArgument(const flutter::EncodableValue &arguments,
     auto map = std::get<flutter::EncodableMap>(arguments);
     if (map.count(name) > 0) {
         auto value = map[name];
-        if (!std::holds_alternative<T>(value)) {
-            s_logFile << "GetArgument() the value is of wrong type, index:" << value.index()
-                      << std::endl;
+        if (std::holds_alternative<T>(value)) {
+            return std::get<T>(value);
+        } else {
+            spdlog::error("GetOptionalArgument() the value '{}' is of wrong type, index: {}",
+                          name,
+                          value.index());
         }
-        return std::get<T>(value);
-    } else {
-        return defaultValue;
     }
+    return defaultValue;
 }
 
 template<typename T>
